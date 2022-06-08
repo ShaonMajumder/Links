@@ -28,6 +28,6 @@ Route::prefix('links')->group(function(){
     Route::post('insert', [LinkController::class, 'insert']);
     Route::get('{people}/add', [PeopleController::class, 'showAddPeopleInformationForm']);
     Route::get('listtags', [LinkController::class, 'listTags']);
-    
+    Route::get('random', [LinkController::class, 'random']);
     // Route::post('addinfo', [PeopleController::class, 'addInfo']);
 });

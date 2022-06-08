@@ -52,6 +52,12 @@ class LinkController extends Controller
             }
             $request->merge(['tags' => $tag_values]);
             Link::create($request->only('link','tags'));
+
+            $myfile = fopen("contents.list", "a") or die("Unable to open file!");
+            $txt = $request->link;
+            fwrite($myfile, "\n". $txt);
+            fclose($myfile);
+
             $this->apiSuccess();
             return $this->apiOutput(Response::HTTP_OK, "New People added ...");  
             // return $this->listLinks('New People added ...');
@@ -66,6 +72,47 @@ class LinkController extends Controller
         $this->data = $tags->toJson();
         $this->apiSuccess();
         return $this->apiOutput(Response::HTTP_OK, "All properties listed ...");
+    }
+
+    public function random(){
+        $file="input.list";
+        $linecount = 0;
+        $handle = fopen($file, "r");
+        while(!feof($handle)){
+        $line = fgets($handle);
+        $linecount++;
+        }
+
+        fclose($handle);
+
+        $random_line_number = rand(1, $linecount);
+        $lines = file($file);
+        $link = $lines[$random_line_number];
+        $link = trim(preg_replace('/\s\s+/', ' ', $link));
+
+        
+        
+
+ ?>
+
+    <script type="text/javascript">
+        
+        
+    (function() {
+   // your page initialization code here
+   // the DOM will be available here
+   window.open("<?php echo $link; ?>", "_blank");
+})();
+        
+    </script>
+
+<?php
+
+        
+        // $tags = Tag::get();
+        // $this->data = $tags->toJson();
+        // $this->apiSuccess();
+        // return $this->apiOutput(Response::HTTP_OK, "All properties listed ...");
     }
 
     public function addInfo(Request $request){
