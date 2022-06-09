@@ -78,7 +78,7 @@ class LinkController extends Controller
             fclose($myfile);
 
             $this->apiSuccess();
-            return $this->apiOutput(Response::HTTP_OK, "New People added ...");  
+            return $this->apiOutput(Response::HTTP_OK, "New Link added ...");  
             // return $this->listLinks('New People added ...');
         }else{
             return $this->apiOutput(Response::HTTP_OK, "Minimum one field is required ...");
