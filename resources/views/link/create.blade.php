@@ -38,6 +38,16 @@ $(document).ready(function() {
     });
   });
 
+  
+  $( "#file-button" ).click(function(e){
+    e.preventDefault();
+    $('#file').click();
+  });
+
+  $('input[type=file]').change(function() { 
+    // select the form and submit
+      $('#form').submit(); 
+  });
 
 });
 
@@ -57,6 +67,13 @@ $(document).ready(function() {
 
                     <form id="form" action="{{url('links/insert')}}" method="post">
                       @csrf
+                      <div class="form-group">
+                        <input type="file" class="form-control" id="file" name="file" placeholder="Choose file">
+                        <button id="file-button">Bulk Input</button>
+                      </div>
+                      
+                      
+                      
                         <div class="form-group">
                           <label for="link">Full link</label>
                           <input type="text" class="form-control" id="link" name="link" placeholder="Link">
@@ -131,6 +148,8 @@ $(document).ready( function() {
   });
 
 
+
+
   $("#form").submit(function(e){
     
     e.preventDefault();
@@ -144,22 +163,30 @@ $(document).ready( function() {
     let iris = $('#iris').val();
     let dna = $('#dna').val();
     let national_health_certificate_number = $('#national_health_certificate_number').val();
+    let file = $('#file')[0].files[0];
+
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('link', link);
+    formData.append('tags', tags);
+    formData.append("_token", "{{ csrf_token() }}");
+    // link:link,
+    // tags:tags,
+    // file:file,
+    // mother_name:mother_name,
+    // photo:photo,
+    // nid:nid,
+    // birth_certificate_number:birth_certificate_number,
+    // iris:iris,
+    // dna:dna,
+    // national_health_certificate_number:national_health_certificate_number    
 
     $.ajax({
       url: "/links/insert",
       type:"POST",
-      data:{
-        "_token": "{{ csrf_token() }}",
-        link:link,
-        tags:tags,
-        mother_name:mother_name,
-        photo:photo,
-        nid:nid,
-        birth_certificate_number:birth_certificate_number,
-        iris:iris,
-        dna:dna,
-        national_health_certificate_number:national_health_certificate_number    
-      },
+      data: formData,
+      processData: false,  // tell jQuery not to process the data
+       contentType: false,  // tell jQuery not to set contentType
       success:function(response){
         toastr.success(response.message);
         // window.location.href = "{{ route('links.list','message=New links added ...') }}";
