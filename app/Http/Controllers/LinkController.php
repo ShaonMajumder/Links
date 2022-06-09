@@ -42,40 +42,76 @@ class LinkController extends Controller
 
     }
 
+    public function bulkInput(Request $request)
+    {
+         
+        
+ 
+    }
+
     public function insert(Request $request){
         $new_request = $request->except(['_token']);
         $request_result = false;
         foreach ($new_request as $value)
             $request_result = $request_result || ($value != null);
+        $request_result = $request->file && $request->file != 'undefined';
 
         if($request_result ){
-            $tag_values = [];
-            $i = 0;
-            foreach($request->tags as $tag){
-                if( ! is_numeric($tag) and ! Tag::where('name',$tag)->first() ){
-                    $tagObj = new Tag();
-                    $tagObj->name = $tag;
-                    $tagObj->causer_id = Auth::user()->id;
-                    $tagObj->save();
-                    $tag = $tagObj->id;
-                    $text = "New Tag '$tag' added";
+            if($request->tags){
+                $tag_values = [];
+                $i = 0;
+                foreach($request->tags as $tag){
+                    if( ! is_numeric($tag) and ! Tag::where('name',$tag)->first() ){
+                        $tagObj = new Tag();
+                        $tagObj->name = $tag;
+                        $tagObj->causer_id = Auth::user()->id;
+                        $tagObj->save();
+                        $tag = $tagObj->id;
+                        $text = "New Tag '$tag' added";
+                    }
+                    $tag_values[$i] = $tag;
+                    $i++;
                 }
-                $tag_values[$i] = $tag;
-                $i++;
-            }
-            $request->merge(['tags' => $tag_values]);
+                $request->merge(['tags' => $tag_values]);
 
-            $link = Link::where('link',$request->link);
-            if($link->count() > 0){
-                $link->update(['tags' => $request->tags]);
-            }else{
-                Link::create($request->only('link','tags'));
+                $link = Link::where('link',$request->link);
+                if($link->count() > 0){
+                    $link->update(['tags' => $request->tags]);
+                }else{
+                    Link::create($request->only('link','tags'));
+                }
             }
+            
+            if($request->file && $request->file != 'undefined'){
+                // dd($request->file);
+                $validatedData = $request->validate([
+                    'file' => 'required|max:2048',
+                ]);
+                $name = $request->file('file')->getClientOriginalName();
+                $path = $request->file('file')->store('public/files');
+                
+                
+                $fileName = auth()->id() . '_' . time() . '.'. $request->file->extension();  
+                // dd(public_path(''), $fileName);
+                $request->file->move(public_path(''), $fileName);
+                $lines = file($fileName);
+                
+                $records = array();
+                foreach($lines as $line){
+                    $link = trim(preg_replace('/\s\s+/', ' ', $line));
+                    
+                    array_push($records,array('link'=>$link));
+                }
+                // dd(        $records);
+                Link::insert($records);
+                
+            }
+            
 
-            $myfile = fopen("contents.list", "a") or die("Unable to open file!");
-            $txt = $request->link;
-            fwrite($myfile, "\n". $txt);
-            fclose($myfile);
+            // $myfile = fopen("contents.list", "a") or die("Unable to open file!");
+            // $txt = $request->link;
+            // fwrite($myfile, "\n". $txt);
+            // fclose($myfile);
 
             $this->apiSuccess();
             return $this->apiOutput(Response::HTTP_OK, "New Link added ...");  
@@ -93,23 +129,25 @@ class LinkController extends Controller
         return $this->apiOutput(Response::HTTP_OK, "All properties listed ...");
     }
 
-    public function random(){
-        $file="input.list";
+    public function lineCount($file){
         $linecount = 0;
         $handle = fopen($file, "r");
         while(!feof($handle)){
         $line = fgets($handle);
         $linecount++;
         }
-
         fclose($handle);
-
+        return $linecount;
+    }
+    public function random($file="input.list"){
+        $linecount = $this->lineCount($file);
         $random_line_number = rand(1, $linecount);
         $lines = file($file);
         $link = $lines[$random_line_number];
         $link = trim(preg_replace('/\s\s+/', ' ', $link));
 
-        
+        return $link;
+        // dd($link);
         
 
  ?>
