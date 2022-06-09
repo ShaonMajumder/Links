@@ -28,6 +28,20 @@ class LinkController extends Controller
         }
     }
 
+    public function checkUniqueLink(Request $request){
+        $link = Link::where('link',$request->link);
+        if($link->count() > 0){
+            $link = $link->first();
+            $tags = Tag::whereIn('id',$link->tags)->get();
+            $this->data = $tags->toJson();
+            return $this->apiOutput(Response::HTTP_OK, "Link exists ...");
+        }else{
+            $this->apiSuccess();
+            return $this->apiOutput(Response::HTTP_OK, "Unique Link ...");
+        }
+
+    }
+
     public function insert(Request $request){
         // dd($request->all());
         $new_request = $request->except(['_token']);

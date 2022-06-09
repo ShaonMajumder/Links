@@ -7,6 +7,38 @@ $(document).ready(function() {
     tags: true,
     tokenSeparators: [',', ' ']
   });
+
+  $("#link").on("input", function(){
+    // Print entered value in a div box
+    
+
+    let link = $('#link').val();
+    $.ajax({
+      url: "/links/check-unique",
+      type:"POST",
+      data:{
+        "_token": "{{ csrf_token() }}",
+        link:link 
+      },
+      success:function(response){
+        if(response.status == false) {
+          toastr.warning(response.message);
+          let data = response.data;
+          data = JSON.parse(data); //convert to javascript array
+          values = '';
+          $.each(data,function(key,value){
+            values+="<option value='"+value.id+"' selected>"+value.name+"</option>";
+          });
+          $("#tag").html(values);
+        }
+      },
+      error: function(response) {
+        toastr.error(response.message);
+      },
+    });
+  });
+
+
 });
 
 </script>

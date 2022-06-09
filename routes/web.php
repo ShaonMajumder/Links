@@ -26,6 +26,7 @@ Route::prefix('links')->group(function(){
     Route::get('list', [LinkController::class, 'listLinks'])->name('links.list');
     Route::get('new', [PeopleController::class, 'create']);
     Route::post('insert', [LinkController::class, 'insert']);
+    Route::post('check-unique', [LinkController::class, 'checkUniqueLink']);
     Route::get('{people}/add', [PeopleController::class, 'showAddPeopleInformationForm']);
     Route::get('listtags', [LinkController::class, 'listTags']);
     Route::get('random', [LinkController::class, 'random']);
