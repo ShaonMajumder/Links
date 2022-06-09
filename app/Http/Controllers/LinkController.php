@@ -43,7 +43,6 @@ class LinkController extends Controller
     }
 
     public function insert(Request $request){
-        // dd($request->all());
         $new_request = $request->except(['_token']);
         $request_result = false;
         foreach ($new_request as $value)
@@ -65,7 +64,13 @@ class LinkController extends Controller
                 $i++;
             }
             $request->merge(['tags' => $tag_values]);
-            Link::create($request->only('link','tags'));
+
+            $link = Link::where('link',$request->link);
+            if($link->count() > 0){
+                $link->update(['tags' => $request->tags]);
+            }else{
+                Link::create($request->only('link','tags'));
+            }
 
             $myfile = fopen("contents.list", "a") or die("Unable to open file!");
             $txt = $request->link;
