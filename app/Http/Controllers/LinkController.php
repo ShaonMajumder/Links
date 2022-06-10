@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Components\Message;
 use App\Models\Link;
 use App\Models\Tag;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -54,10 +55,16 @@ class LinkController extends Controller
         $request_result = false;
         foreach ($new_request as $value)
             $request_result = $request_result || ($value != null);
-        $request_result = $request->file && $request->file != 'undefined';
+        $request_result = ($request->file && $request->file != 'undefined') || $request_result;
+
 
         if($request_result ){
+            
             if($request->tags){
+                if( ! is_array($request->tags) )
+                    $request->tags = explode(",",$request->tags);
+                
+
                 $tag_values = [];
                 $i = 0;
                 foreach($request->tags as $tag){
@@ -146,8 +153,6 @@ class LinkController extends Controller
         $link = $lines[$random_line_number];
         $link = trim(preg_replace('/\s\s+/', ' ', $link));
 
-        return $link;
-        // dd($link);
         
 
  ?>
