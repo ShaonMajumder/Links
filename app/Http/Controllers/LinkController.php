@@ -29,6 +29,10 @@ class LinkController extends Controller
         }
     }
 
+    public function tagMangementPage(){
+        return view('link.tags.create');
+    }
+
     public function checkUniqueLink(Request $request){
         $link = Link::where('link',$request->link);
         $check_unique = false;
@@ -112,20 +116,22 @@ class LinkController extends Controller
                 $fileName = auth()->id() . '_' . time() . '.'. $request->file->extension();  
                 // dd(public_path(''), $fileName);
                 $request->file->move(public_path(''), $fileName);
-                $lines = file($fileName);
                 
-                $records = array();
+                $number = 0;
+                $records = [];
+                $lines = file($fileName);
                 foreach($lines as $line){
                     $link = trim(preg_replace('/\s\s+/', ' ', $line));
-                    
-                    array_push($records,array('link'=>$link));
+                    // $records[] = ['link'=> $link ];
+                    $result = Link::firstOrCreate(['link'=> $link, 'tags'=>'bulk' ]);
+                    if($result->wasRecentlyCreated)
+                        $number++;
                 }
-                // dd(        $records);
-                Link::insert($records);
+                // Link::upsert($records,['link']);
                 
 
                 $this->apiSuccess();
-                return $this->apiOutput(Response::HTTP_OK, count($records)." Links added ...");
+                return $this->apiOutput(Response::HTTP_OK, $number." Links added ...");
                 
             }
             
