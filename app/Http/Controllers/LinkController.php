@@ -35,10 +35,12 @@ class LinkController extends Controller
         if($link->count() > 0){
             $check_unique = true;
             $link = $link->first();
-            $tags = Tag::whereIn('id',$link->tags)->get();
+            $selected_tags = Tag::whereIn('id',$link->tags)->get();
+            $unselected_tags = Tag::whereNotIn('id',$link->tags)->get();
             $check_unique = true;
             $this->data = [
-                'tags' => $tags->toJson(),
+                'selected_tags' => $selected_tags->toJson(),
+                'unselected_tags' => $unselected_tags->toJson(),
                 'check_unique' => $check_unique
             ]; 
             return $this->apiOutput(Response::HTTP_OK, "Link exists ...");

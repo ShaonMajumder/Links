@@ -23,12 +23,19 @@ $(document).ready(function() {
       success:function(response){
         if(response.status == false) {
           toastr.warning(response.message);
-          let data = response.data.tags;
+          let data = response.data.selected_tags;
           data = JSON.parse(data); //convert to javascript array
           values = '';
           $.each(data,function(key,value){
             values+="<option value='"+value.id+"' selected>"+value.name+"</option>";
           });
+
+          data = response.data.unselected_tags;
+          data = JSON.parse(data); //convert to javascript array
+          $.each(data,function(key,value){
+            values+="<option value='"+value.id+"'>"+value.name+"</option>";
+          });
+
           $("#tag").html(values);
         }
       },
