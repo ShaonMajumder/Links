@@ -39,8 +39,8 @@ class LinkController extends Controller
         if($link->count() > 0){
             $check_unique = true;
             $link = $link->first();
-            $selected_tags = Tag::whereIn('id',$link->tags)->get();
-            $unselected_tags = Tag::whereNotIn('id',$link->tags)->get();
+            $selected_tags = Tag::whereIn('id',$link->tags ?? [])->get();
+            $unselected_tags = Tag::whereNotIn('id',$link->tags ?? [])->get();
             $check_unique = true;
             $this->data = [
                 'selected_tags' => $selected_tags->toJson(),
@@ -123,7 +123,7 @@ class LinkController extends Controller
                 foreach($lines as $line){
                     $link = trim(preg_replace('/\s\s+/', ' ', $line));
                     // $records[] = ['link'=> $link ];
-                    $result = Link::firstOrCreate(['link'=> $link, 'tags'=>'bulk' ]);
+                    $result = Link::firstOrCreate(['link'=> $link, 'bulkin'=>true ]);
                     if($result->wasRecentlyCreated)
                         $number++;
                 }
@@ -168,34 +168,14 @@ class LinkController extends Controller
         return $linecount;
     }
     public function random($file="input.list"){
-        $linecount = $this->lineCount($file);
-        $random_line_number = rand(1, $linecount);
-        $lines = file($file);
-        $link = $lines[$random_line_number];
-        $link = trim(preg_replace('/\s\s+/', ' ', $link));
+        $link = Link::where('bulkin',true)->get()->random();
+        $link = $link->link;
 
-        
-
- ?>
-
-    <script type="text/javascript">
-        
-        
-    (function() {
-   // your page initialization code here
-   // the DOM will be available here
-   window.open("<?php echo $link; ?>", "_blank");
-})();
-        
-    </script>
-
-<?php
-
-        
-        // $tags = Tag::get();
-        // $this->data = $tags->toJson();
-        // $this->apiSuccess();
-        // return $this->apiOutput(Response::HTTP_OK, "All properties listed ...");
+        echo '<script type="text/javascript">
+            (function() {
+                window.open("'.$link.'", "_blank");
+            })();
+        </script>';
     }
 
     public function addInfo(Request $request){
