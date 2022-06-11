@@ -31,13 +31,22 @@ class LinkController extends Controller
 
     public function checkUniqueLink(Request $request){
         $link = Link::where('link',$request->link);
+        $check_unique = false;
         if($link->count() > 0){
+            $check_unique = true;
             $link = $link->first();
             $tags = Tag::whereIn('id',$link->tags)->get();
-            $this->data = $tags->toJson();
+            $check_unique = true;
+            $this->data = [
+                'tags' => $tags->toJson(),
+                'check_unique' => $check_unique
+            ]; 
             return $this->apiOutput(Response::HTTP_OK, "Link exists ...");
         }else{
             $this->apiSuccess();
+            $this->data = [
+                'check_unique' => $check_unique
+            ]; 
             return $this->apiOutput(Response::HTTP_OK, "Unique Link ...");
         }
 
@@ -111,6 +120,10 @@ class LinkController extends Controller
                 }
                 // dd(        $records);
                 Link::insert($records);
+                
+
+                $this->apiSuccess();
+                return $this->apiOutput(Response::HTTP_OK, count($records)." Links added ...");
                 
             }
             

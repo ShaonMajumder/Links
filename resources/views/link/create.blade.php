@@ -23,7 +23,7 @@ $(document).ready(function() {
       success:function(response){
         if(response.status == false) {
           toastr.warning(response.message);
-          let data = response.data;
+          let data = response.data.tags;
           data = JSON.parse(data); //convert to javascript array
           values = '';
           $.each(data,function(key,value){
@@ -68,7 +68,7 @@ $(document).ready(function() {
                     <form id="form" action="{{url('links/insert')}}" method="post">
                       @csrf
                       <div class="form-group">
-                        <input type="file" class="form-control" id="file" name="file" placeholder="Choose file">
+                        <input style="display: none;" type="file" class="form-control" id="file" name="file" placeholder="Choose file">
                         <button id="file-button">Bulk Input</button>
                       </div>
                       
