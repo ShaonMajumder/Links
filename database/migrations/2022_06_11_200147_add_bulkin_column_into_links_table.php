@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ChangeTagsInLinksTable extends Migration
+class AddBulkinColumnIntoLinksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,9 @@ class ChangeTagsInLinksTable extends Migration
      */
     public function up()
     {
-        if( Schema::hasColumn('links', 'tags')) {
-            Schema::table('links', function (Blueprint $table) {
-                $table->dropColumn('tags');
-            });
-        }
         Schema::table('links', function (Blueprint $table) {
-            $table->json('tags')->nullable()->after('links');
+            $table->boolean('bulkin')->default(false)->after('tags');
         });
-        
     }
 
     /**
