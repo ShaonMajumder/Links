@@ -31,5 +31,10 @@ Route::prefix('links')->group(function(){
     Route::get('{people}/add', [PeopleController::class, 'showAddPeopleInformationForm']);
     Route::get('listtags', [LinkController::class, 'listTags']);
     Route::get('random', [LinkController::class, 'random']);
+
+    Route::prefix('tags')->group(function(){
+        Route::get('edit', [LinkController::class, 'tagMangementPage']);
+    });
+    
     // Route::post('addinfo', [PeopleController::class, 'addInfo']);
 });
