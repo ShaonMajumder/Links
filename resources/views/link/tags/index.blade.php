@@ -8,17 +8,17 @@ $(document).ready(function() {
     tokenSeparators: [',', ' ']
   });
 
-  $("#tag").on("input", function(){
+  $("#link").on("input", function(){
     // Print entered value in a div box
     
 
-    let tag = $('#tag').val();
+    let link = $('#link').val();
     $.ajax({
       url: "/links/check-unique",
       type:"POST",
       data:{
         "_token": "{{ csrf_token() }}",
-        tag:tag 
+        link:link 
       },
       success:function(response){
         if(response.status == false) {
@@ -60,44 +60,32 @@ $(document).ready(function() {
 
 </script>
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    <form id="form" action="{{url('links/insert')}}" method="post">
-                      @csrf
-                        <input type="hidden" id="tag_id" value="{{ $tag->id }}" />
-                      
-                        <div class="form-group">
-                          <label for="tag_name">Tag</label>
-                          <input type="text" class="form-control" id="tag_name" name="tag_name" placeholder="tag_name" value="{{ $tag->name }}">
-                        </div>
-
-                        <div class="form-group">
-                          <label for="inputPropery">tag Name</label>
-                          {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="tagHelp" placeholder="Enter email"> --}}
-                          <select style="width:100%;" id="tag" name="tag" multiple="">
-                            <option></option>
-                          </select>
-                          {{-- <small id="tagHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> --}}
-                        </div>
-
-                        
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+  <div class="row justify-content-center">
+    <div class="table-responsive">
+      <table id="table" class="table table-striped table-bordered table-hover mb-5">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Child Tag</th>
+            </tr>
+        </thead>
+        <tbody id="tablecontents" >
+            @foreach($tags as $tag)
+            <tr class="rowRef" data-id="{{ $tag->id }}" >
+                <td><a href="tags/{{ $tag->id }}"><i class="fa-solid fa-plus"></i></a>{{ $tag->name }}</td>
+                <td><a href="/users/{{ $tag->createdBy->id }}">{{ $tag->createdBy->name }}</td>
+                {{-- <td>{{ $tag->child_id }}</td> --}}
+            </tr>
+            @endforeach
+        </tbody>
+      </table>
+      
     </div>
+  </div>
+      
 </div>
+
 <script type="text/javascript">
 $(document).ready( function() {
   toastr.options =
@@ -124,26 +112,25 @@ $(document).ready( function() {
     
     e.preventDefault();
 
-    let tag = $('#tag_name').val();
+    let link = $('#link').val();
     let tags = $('#tag').val();
-    let tag_id = $('#tag_id').val();
-
-    
+    let file = $('#file')[0].files[0];
 
     var formData = new FormData();
-    formData.append('tag', tag);
+    formData.append('file', file);
+    formData.append('link', link);
     formData.append('tags', tags);
     formData.append("_token", "{{ csrf_token() }}");
-    // tag:tag,
+    // link:link,
     // tags:tags,
     // file:file,
     
     $.ajax({
-      url: tag_id+"/update",
+      url: "/links/insert",
       type:"POST",
       data: formData,
       processData: false,  // tell jQuery not to process the data
-      contentType: false,  // tell jQuery not to set contentType
+       contentType: false,  // tell jQuery not to set contentType
       success:function(response){
         toastr.success(response.message);
         // window.location.href = "{{ route('links.list','message=New links added ...') }}";

@@ -8,17 +8,17 @@ $(document).ready(function() {
     tokenSeparators: [',', ' ']
   });
 
-  $("#tag").on("input", function(){
+  $("#link").on("input", function(){
     // Print entered value in a div box
     
 
-    let tag = $('#tag').val();
+    let link = $('#link').val();
     $.ajax({
       url: "/links/check-unique",
       type:"POST",
       data:{
         "_token": "{{ csrf_token() }}",
-        tag:tag 
+        link:link 
       },
       success:function(response){
         if(response.status == false) {
@@ -72,19 +72,17 @@ $(document).ready(function() {
                         </div>
                     @endif
 
-                    <form id="form" action="{{url('links/insert')}}" method="post">
+                    <form id="form" action="" method="post">
                       @csrf
-                        <input type="hidden" id="tag_id" value="{{ $tag->id }}" />
-                      
                         <div class="form-group">
-                          <label for="tag_name">Tag</label>
-                          <input type="text" class="form-control" id="tag_name" name="tag_name" placeholder="tag_name" value="{{ $tag->name }}">
+                          <label for="link">Full link</label>
+                          <input type="text" class="form-control" id="link" name="link" placeholder="Link">
                         </div>
 
                         <div class="form-group">
                           <label for="inputPropery">tag Name</label>
                           {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="tagHelp" placeholder="Enter email"> --}}
-                          <select style="width:100%;" id="tag" name="tag" multiple="">
+                          <select style="width:100%;"   id="tag" name="tag" multiple="">
                             <option></option>
                           </select>
                           {{-- <small id="tagHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> --}}
@@ -124,22 +122,21 @@ $(document).ready( function() {
     
     e.preventDefault();
 
-    let tag = $('#tag_name').val();
+    let link = $('#link').val();
+    let tags = $('#tag_id').val();
     let tags = $('#tag').val();
-    let tag_id = $('#tag_id').val();
-
-    
+    let file = $('#file')[0].files[0];
 
     var formData = new FormData();
-    formData.append('tag', tag);
+    formData.append('link', link);
     formData.append('tags', tags);
     formData.append("_token", "{{ csrf_token() }}");
-    // tag:tag,
+    // link:link,
     // tags:tags,
-    // file:file,
+  
     
     $.ajax({
-      url: tag_id+"/update",
+      url: "/tags/"++"/update",
       type:"POST",
       data: formData,
       processData: false,  // tell jQuery not to process the data

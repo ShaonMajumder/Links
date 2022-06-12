@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Components\Message;
 use App\Models\Link;
 use App\Models\Tag;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -29,8 +30,21 @@ class LinkController extends Controller
         }
     }
 
+    public function showUser(User $user){
+        dd($user);
+    }
+
+    public function tagUpdate(Tag $tag){
+        dd($tag);
+    }
+
+    public function tagEditPage(Tag $tag){
+        return view('link.tags.create',compact('tag'));
+    }
+
     public function tagMangementPage(){
-        return view('link.tags.create');
+        $tags = Tag::all();
+        return view('link.tags.index',compact('tags'));
     }
 
     public function checkUniqueLink(Request $request){

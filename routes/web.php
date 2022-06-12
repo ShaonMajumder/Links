@@ -22,6 +22,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::prefix('users')->group(function(){
+    Route::get('{id}', [LinkController::class, 'showUser']);
+});
 Route::prefix('links')->group(function(){
     Route::get('list', [LinkController::class, 'listLinks'])->name('links.list');
     Route::get('new', [PeopleController::class, 'create']);
@@ -33,7 +36,10 @@ Route::prefix('links')->group(function(){
     Route::get('random', [LinkController::class, 'random']);
 
     Route::prefix('tags')->group(function(){
-        Route::get('edit', [LinkController::class, 'tagMangementPage']);
+        Route::get('/', [LinkController::class, 'tagMangementPage']);
+        Route::get('/{tag}', [LinkController::class, 'tagEditPage']);
+        Route::post('/{tag}/update', [LinkController::class, 'tagUpdate']);
+        
     });
     
     // Route::post('addinfo', [PeopleController::class, 'addInfo']);
