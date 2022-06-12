@@ -19,7 +19,7 @@ class ChangeTagsInLinksTable extends Migration
             });
         }
         Schema::table('links', function (Blueprint $table) {
-            $table->json('tags')->nullable()->after('links');
+            $table->json('tags')->nullable()->after('link');
         });
         
     }
