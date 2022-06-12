@@ -117,18 +117,34 @@ class LinkController extends Controller
                 // dd(public_path(''), $fileName);
                 $request->file->move(public_path(''), $fileName);
                 
+
+                
+
                 $number = 0;
                 $records = [];
                 $lines = file($fileName);
+                
                 foreach($lines as $line){
                     $link = trim(preg_replace('/\s\s+/', ' ', $line));
-                    // $records[] = ['link'=> $link ];
-                    $result = Link::firstOrCreate(['link'=> $link, 'bulkin'=>true ]);
-                    if($result->wasRecentlyCreated)
-                        $number++;
+                    $records[] = $link;
+                    // $result = Link::firstOrCreate(['link'=> $link, 'bulkin'=>true ]);
+                    // if($result->wasRecentlyCreated)
+                    //     $number++;
                 }
-                // Link::upsert($records,['link']);
                 
+                $rows = $records;
+                $matched_result = Link::whereIn('link',$rows)->pluck('link')->toArray();
+                foreach($matched_result as $result)
+                    $temp[$result] = 1;
+                
+                $data = [];
+                foreach($rows as $row){
+                    if(!isset($temp[$row])){
+                        $data[] = [ 'link' => $row ];
+                    }
+                }
+                    
+                Link::insert($data);
 
                 $this->apiSuccess();
                 return $this->apiOutput(Response::HTTP_OK, $number." Links added ...");

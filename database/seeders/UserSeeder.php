@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $global_password = env('APP_GLOBAL_PASSWORD');
+        $global_password = env('APP_GLOBAL_PASSWORD','12345678');
         
         $users = [
             [
