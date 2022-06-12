@@ -95,20 +95,21 @@ class LinkController extends Controller
                 
 
                 $tag_values = [];
-                $i = 0;
                 foreach($request->tags as $tag){
                     if( ! is_numeric($tag) and ! Tag::where('name',$tag)->first() ){
+                        
                         $tagObj = new Tag();
                         $tagObj->name = $tag;
                         $tagObj->causer_id = Auth::user()->id;
                         $tagObj->save();
                         $tag = $tagObj->id;
+
                         $text = "New Tag '$tag' added";
                     }
-                    $tag_values[$i] = $tag;
-                    $i++;
+                    $tag_values[] = $tag;
                 }
-                $request->merge(['tags' => $tag_values]);
+                
+                $request->tags = $tag_values;
 
                 $link = Link::where('link',$request->link);
                 if($link->count() > 0){
