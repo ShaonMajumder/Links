@@ -1,0 +1,30 @@
+Backend
+1. Input New Link, add tags for it by typing ; if tags are new insert it all of them.
+2. If not unique, populated associated tags in box, and toaster message, that is not unique.
+3. Do Not insert if not unique, only update the tags
+4. Enter massive links seperated by newline to DB , insert if not exist 
+6. Randomly pick a link from links, where tag has waititng-for-tag and open to new tab.
+4.1 Efficient the query by terminating loop or upsert
+5. automatic taging when seleting a subset, select also it superset.
+7. tag listing, tag edit page, Edit Tag name later
+3. new tag inserted as string instead of id
+
+10. New feature update instead of new link added
+8. pick domain name from unique input, save in domains tables and tag it.
+9. Refresh form for new data 
+
+
+11. Rate tags quality for a link, to countdown and compare two links
+12. Stop confusion parent tag shows sub tags, but sub tag select must be the parent tags
+
+Bug fix:
+1. Not selected option missing when edit
+2. Fix - handle null value  when unique check
+
+
+
+Unwatched tag - which give opportunity to watch later and update next
+
+
+Front End 
+1. Split into tab bulk input | Single Input
