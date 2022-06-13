@@ -96,7 +96,6 @@ $(document).ready(function() {
                           </select>
                           {{-- <small id="tagHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> --}}
                         </div>
-
                         
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
