@@ -8,42 +8,42 @@ $(document).ready(function() {
     tokenSeparators: [',', ' ']
   });
 
-  $("#tag").on("input", function(){
-    // Print entered value in a div box
+  // $("#tag").on("input", function(){
+  //   // Print entered value in a div box
     
 
-    let tag = $('#tag').val();
-    $.ajax({
-      url: "/links/check-unique",
-      type:"POST",
-      data:{
-        "_token": "{{ csrf_token() }}",
-        tag:tag 
-      },
-      success:function(response){
-        if(response.status == false) {
-          toastr.warning(response.message);
-          let data = response.data.selected_tags;
-          data = JSON.parse(data); //convert to javascript array
-          values = '';
-          $.each(data,function(key,value){
-            values+="<option value='"+value.id+"' selected>"+value.name+"</option>";
-          });
+  //   let tag = $('#tag').val();
+  //   $.ajax({
+  //     url: "/links/check-unique",
+  //     type:"POST",
+  //     data:{
+  //       "_token": "{{ csrf_token() }}",
+  //       tag:tag 
+  //     },
+  //     success:function(response){
+  //       if(response.status == false) {
+  //         toastr.warning(response.message);
+  //         let data = response.data.selected_tags;
+  //         data = JSON.parse(data); //convert to javascript array
+  //         values = '';
+  //         $.each(data,function(key,value){
+  //           values+="<option value='"+value.id+"' selected>"+value.name+"</option>";
+  //         });
 
-          data = response.data.unselected_tags;
-          data = JSON.parse(data); //convert to javascript array
-          $.each(data,function(key,value){
-            values+="<option value='"+value.id+"'>"+value.name+"</option>";
-          });
+  //         data = response.data.unselected_tags;
+  //         data = JSON.parse(data); //convert to javascript array
+  //         $.each(data,function(key,value){
+  //           values+="<option value='"+value.id+"'>"+value.name+"</option>";
+  //         });
 
-          $("#tag").html(values);
-        }
-      },
-      error: function(response) {
-        toastr.error(response.message);
-      },
-    });
-  });
+  //         $("#tag").html(values);
+  //       }
+  //     },
+  //     error: function(response) {
+  //       toastr.error(response.message);
+  //     },
+  //   });
+  // });
 
   
   $( "#file-button" ).click(function(e){
@@ -113,12 +113,13 @@ $(document).ready( function() {
   };
 
   $.getJSON("/links/listtags",function(response){
+    let parent_tag = {{ $tag->id }};
     let data = response.data;
     data = JSON.parse(data); //convert to javascript array
     values = '';
     $.each(data,function(key,value){
-      
-      values+="<option value='"+value.id+"'>"+value.name+"</option>";
+      if(value.id != parent_tag)
+        values+="<option value='"+value.id+"'>"+value.name+"</option>";
     });
     $("#tag").html(values); 
   });
@@ -133,7 +134,7 @@ $(document).ready( function() {
     let tag = $('#tag_name').val();
     let tags = $('#tag').val();
     let tag_id = $('#tag_id').val();
-
+    
     $.ajax({
       url: tag_id+"/update",
       type:"POST",

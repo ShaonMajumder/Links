@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class LinkController extends Controller
 {
     use Message;
-    public function listLinks($message=null){
+    public function listIndex($message=null){
         $columns=[];
         $query = "SHOW COLUMNS FROM links";
         $results = DB::select($query);
@@ -28,6 +28,10 @@ class LinkController extends Controller
         }else{
             return view('link.list',compact('links','columns'));
         }
+    }
+
+    public function linkEdit(Link $link){
+        dd($link);
     }
 
     public function showUser(User $user){
@@ -51,6 +55,7 @@ class LinkController extends Controller
 
     public function tagUpdate(Tag $tag,Request $request){
         $all_numeric = true;
+        
         foreach ($request->tags as $key) { 
             if (!(is_numeric($key))) {
                 $all_numeric = false;
@@ -61,10 +66,10 @@ class LinkController extends Controller
         if ($all_numeric) {
             $tags =Tag::whereIn('id',$request->tags)->update(['parent_id'=>$tag->id]);
             $this->apiSuccess();
-            return $this->apiOutput(Response::HTTTP_OK,"Child Tags Updated ...");
+            return $this->apiOutput(Response::HTTP_OK,"Child Tags Updated ...");
         } 
         else {
-            return $this->apiOutput(Response::HTTTP_OK,"Adding new tags are not allowed here, added them in link entry ...");
+            return $this->apiOutput(Response::HTTP_OK,"Adding new tags are not allowed here, added them in link entry ...");
         }
 
         
@@ -75,14 +80,14 @@ class LinkController extends Controller
         return view('link.tags.edit',compact('tags','tag'));
     }
 
-    public function tagMangementPage(){
+    public function tagsIndex(){
         $tags = Tag::all();
         return view('link.tags.index',compact('tags'));
     }
 
     public function checkUniqueLink(Request $request){
         $link = Link::where('link',$request->link);
-        dd($request->tags);
+
         $check_unique = false;
         if($link->count() > 0){
             $check_unique = true;
