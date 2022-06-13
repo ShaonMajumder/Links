@@ -20,13 +20,11 @@ $(document).ready(function() {
           if(response.status == true) {
             toastr.warning(response.message);
             let data = response.data;
-            // data = JSON.parse(data); //convert to javascript array
-            values = '';
-            alert(data);
+            let values = $("#tag").val();
             $.each(data,function(key,value){
-              values+="<option value='"+value.id+"' selected>"+value.name+"</option>";
+              values.push(value.id);
             });
-            $("#tag").html(values);
+            $("#tag").val(values).trigger('change');
           }
         },
         error: function(response) {
