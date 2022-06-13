@@ -50,7 +50,7 @@ class LinkController extends Controller
             
         $this->apiSuccess();
         $this->data = $parents;
-        return $this->apiOutput(Response::HTTP_OK, "");
+        return $this->apiOutput(Response::HTTP_OK, "Parent tags got successfully");
     }
 
     public function tagUpdate(Tag $tag,Request $request){
@@ -153,8 +153,10 @@ class LinkController extends Controller
                 $link = Link::where('link',$request->link);
                 if($link->count() > 0){
                     $link->update(['tags' => $request->tags]);
+                    $message = "Link updated ...";
                 }else{
                     Link::create($request->only('link','tags'));
+                    $message = "New Link created ...";
                 }
             }
             
@@ -212,7 +214,7 @@ class LinkController extends Controller
             // fclose($myfile);
 
             $this->apiSuccess();
-            return $this->apiOutput(Response::HTTP_OK, "New Link added ...");  
+            return $this->apiOutput(Response::HTTP_OK, $message  ?? " Links added ...");  
             // return $this->listLinks('New People added ...');
         }else{
             return $this->apiOutput(Response::HTTP_OK, "Minimum one field is required ...");
