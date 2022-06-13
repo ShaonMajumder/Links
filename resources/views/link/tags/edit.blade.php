@@ -8,17 +8,17 @@ $(document).ready(function() {
     tokenSeparators: [',', ' ']
   });
 
-  $("#link").on("input", function(){
+  $("#tag").on("input", function(){
     // Print entered value in a div box
     
 
-    let link = $('#link').val();
+    let tag = $('#tag').val();
     $.ajax({
       url: "/links/check-unique",
       type:"POST",
       data:{
         "_token": "{{ csrf_token() }}",
-        link:link 
+        tag:tag 
       },
       success:function(response){
         if(response.status == false) {
@@ -72,22 +72,30 @@ $(document).ready(function() {
                         </div>
                     @endif
 
-                    <form id="form" action="" method="post">
+                    <form id="form" action="{{url('links/insert')}}" method="post">
                       @csrf
+                        <input type="hidden" id="tag_id" value="{{ $tag->id }}" />
+                      
                         <div class="form-group">
-                          <label for="link">Full link</label>
-                          <input type="text" class="form-control" id="link" name="link" placeholder="Link">
+                          <label for="tag_name">Tag</label>
+                          <input type="text" class="form-control" id="tag_name" name="tag_name" placeholder="tag_name" value="{{ $tag->name }}">
                         </div>
 
                         <div class="form-group">
-                          <label for="inputPropery">tag Name</label>
+                          <label for="inputPropery">Child Tags</label>
                           {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="tagHelp" placeholder="Enter email"> --}}
-                          <select style="width:100%;"   id="tag" name="tag" multiple="">
+                          <select style="width:100%;" id="tag" name="tag[]" multiple="">
                             <option></option>
+                            @foreach ($tags as $item)
+                              @if( in_array($item->id, $tag->childTags->pluck('id')->toArray() ) )
+                                <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
+                              @else
+                                <option value="{{ $item->id }}" >{{ $item->name }}</option>
+                              @endif
+                            @endforeach
                           </select>
                           {{-- <small id="tagHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> --}}
                         </div>
-
                         
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
@@ -122,25 +130,17 @@ $(document).ready( function() {
     
     e.preventDefault();
 
-    let link = $('#link').val();
-    let tags = $('#tag_id').val();
+    let tag = $('#tag_name').val();
     let tags = $('#tag').val();
-    let file = $('#file')[0].files[0];
+    let tag_id = $('#tag_id').val();
 
-    var formData = new FormData();
-    formData.append('link', link);
-    formData.append('tags', tags);
-    formData.append("_token", "{{ csrf_token() }}");
-    // link:link,
-    // tags:tags,
-  
-    
     $.ajax({
-      url: "/tags/"++"/update",
+      url: tag_id+"/update",
       type:"POST",
-      data: formData,
-      processData: false,  // tell jQuery not to process the data
-      contentType: false,  // tell jQuery not to set contentType
+      data: {
+        "_token": "{{ csrf_token() }}",
+        tags:tags
+      },
       success:function(response){
         toastr.success(response.message);
         // window.location.href = "{{ route('links.list','message=New links added ...') }}";

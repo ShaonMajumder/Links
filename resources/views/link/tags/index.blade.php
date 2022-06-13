@@ -75,7 +75,11 @@ $(document).ready(function() {
             <tr class="rowRef" data-id="{{ $tag->id }}" >
                 <td><a href="tags/{{ $tag->id }}"><i class="fa-solid fa-plus"></i></a>{{ $tag->name }}</td>
                 <td><a href="/users/{{ $tag->createdBy->id }}">{{ $tag->createdBy->name }}</td>
-                {{-- <td>{{ $tag->child_id }}</td> --}}
+                <td>
+                  @foreach ( $tag->childTags as $child_tag )
+                    <a href="tags/{{ $child_tag->id }}">{{ $child_tag->name }}</a>,
+                  @endforeach
+                </td>
             </tr>
             @endforeach
         </tbody>
