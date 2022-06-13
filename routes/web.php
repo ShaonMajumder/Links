@@ -38,7 +38,10 @@ Route::prefix('links')->group(function(){
     Route::prefix('tags')->group(function(){
         Route::get('/', [LinkController::class, 'tagMangementPage']);
         Route::get('/{tag}', [LinkController::class, 'tagEditPage']);
+        Route::post('/{tag}/select-all-parent-tags', [LinkController::class, 'selectAllParents']);
         Route::post('/{tag}/update', [LinkController::class, 'tagUpdate']);
+        
+        
         
     });
     

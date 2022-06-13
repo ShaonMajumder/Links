@@ -34,6 +34,21 @@ class LinkController extends Controller
         dd($user);
     }
 
+    public function selectAllParents(Tag $tag){
+        $parents = [];
+        $current = $tag;
+        while($current->parent){
+            $parents[] = $current->toArray();
+            $current = $current->parent;
+        }
+        if($current)
+            $parents[] = $current->toArray();
+            
+        $this->apiSuccess();
+        $this->data = $parents;
+        return $this->apiOutput(Response::HTTP_OK, "");
+    }
+
     public function tagUpdate(Tag $tag,Request $request){
         $all_numeric = true;
         foreach ($request->tags as $key) { 
@@ -67,6 +82,7 @@ class LinkController extends Controller
 
     public function checkUniqueLink(Request $request){
         $link = Link::where('link',$request->link);
+        dd($request->tags);
         $check_unique = false;
         if($link->count() > 0){
             $check_unique = true;

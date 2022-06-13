@@ -6,6 +6,33 @@ $(document).ready(function() {
   $("#tag").select2({
     tags: true,
     tokenSeparators: [',', ' ']
+  }).on("select2:selecting", function (e) {
+      // var str = $("#s2id_search_code .select2-choice span").text();
+      // DOSelectAjaxProd(e.val, str);
+      let tag = e.params.args.data.id;
+      $.ajax({
+        url: "/links/tags/"+tag+"/select-all-parent-tags",
+        type:"POST",
+        data:{
+          "_token": "{{ csrf_token() }}",
+        },
+        success:function(response){
+          if(response.status == true) {
+            toastr.warning(response.message);
+            let data = response.data;
+            // data = JSON.parse(data); //convert to javascript array
+            values = '';
+            alert(data);
+            $.each(data,function(key,value){
+              values+="<option value='"+value.id+"' selected>"+value.name+"</option>";
+            });
+            $("#tag").html(values);
+          }
+        },
+        error: function(response) {
+          toastr.error(response.message);
+        },
+      });
   });
 
   $("#link").on("input", function(){
@@ -18,7 +45,8 @@ $(document).ready(function() {
       type:"POST",
       data:{
         "_token": "{{ csrf_token() }}",
-        link:link 
+        link:link,
+        tags:$('#tag').val()
       },
       success:function(response){
         if(response.status == false) {
@@ -44,6 +72,17 @@ $(document).ready(function() {
       },
     });
   });
+
+  
+
+
+// $(document.body).on("change","#tag",function(){
+//  alert(this.value);
+// });
+// $("#tag").on("select2-selecting", function(e) {
+//   alert(e.choice);
+//     // $("#search_code").select2("data",e.choice);
+// });
 
   
   $( "#file-button" ).click(function(e){
@@ -86,7 +125,7 @@ $(document).ready(function() {
                       <div class="form-group">
                         <label for="inputPropery">tag Name</label>
                         {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="tagHelp" placeholder="Enter email"> --}}
-                        <select style="width:100%;"   id="tag" name="tag" multiple="">
+                        <select style="width:100%;"   id="tag" name="tag[]" multiple="">
                           <option></option>
                         </select>
                         {{-- <small id="tagHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> --}}
