@@ -17,6 +17,9 @@ Backend
 11. Rate tags quality for a link, to countdown and compare two links
 12. Stop confusion parent tag shows sub tags, but sub tag select must be the parent tags
 
+Extension
+Keep in wallet and Exit right click menu
+
 Bug fix:
 1. Not selected option missing when edit
 2. Fix - handle null value  when unique check

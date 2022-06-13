@@ -26,6 +26,7 @@ Route::prefix('users')->group(function(){
     Route::get('{id}', [LinkController::class, 'showUser']);
 });
 Route::prefix('links')->group(function(){
+    // Route::get('/', [LinkController::class, 'tagMangementPage']);
     Route::get('list', [LinkController::class, 'listLinks'])->name('links.list');
     Route::get('new', [PeopleController::class, 'create']);
     Route::post('insert', [LinkController::class, 'insert']);
