@@ -34,12 +34,13 @@ class LinkController extends Controller
         dd($user);
     }
 
-    public function tagUpdate(Tag $tag){
-        dd($tag);
+    public function tagUpdate(Tag $tag,Request $request){
+        $tags =Tag::whereIn('id',$request->tags)->update(['parent_id'=>$tag->id]);
+        
     }
 
     public function tagEditPage(Tag $tag){
-        return view('link.tags.create',compact('tag'));
+        return view('link.tags.edit',compact('tag'));
     }
 
     public function tagMangementPage(){
