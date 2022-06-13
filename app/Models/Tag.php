@@ -12,4 +12,8 @@ class Tag extends Model
     function createdBy(){
         return $this->hasOne(User::class,'id');
     }
+
+    function childTags(){
+        return $this->hasMany(Tag::class,'parent_id');
+    }
 }
