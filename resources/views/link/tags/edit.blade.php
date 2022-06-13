@@ -86,6 +86,13 @@ $(document).ready(function() {
                           {{-- <input type="text" class="form-control" id="inputPropery" aria-describedby="tagHelp" placeholder="Enter email"> --}}
                           <select style="width:100%;" id="tag" name="tag[]" multiple="">
                             <option></option>
+                            @foreach ($tags as $item)
+                              @if( in_array($item->id, $tag->childTags->pluck('id')->toArray() ) )
+                                <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
+                              @else
+                                <option value="{{ $item->id }}" >{{ $item->name }}</option>
+                              @endif
+                            @endforeach
                           </select>
                           {{-- <small id="tagHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> --}}
                         </div>

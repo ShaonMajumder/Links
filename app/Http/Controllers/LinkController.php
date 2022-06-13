@@ -35,12 +35,29 @@ class LinkController extends Controller
     }
 
     public function tagUpdate(Tag $tag,Request $request){
-        $tags =Tag::whereIn('id',$request->tags)->update(['parent_id'=>$tag->id]);
+        $all_numeric = true;
+        foreach ($request->tags as $key) { 
+            if (!(is_numeric($key))) {
+                $all_numeric = false;
+                break;
+            } 
+        }
+
+        if ($all_numeric) {
+            $tags =Tag::whereIn('id',$request->tags)->update(['parent_id'=>$tag->id]);
+            $this->apiSuccess();
+            return $this->apiOutput(Response::HTTTP_OK,"Child Tags Updated ...");
+        } 
+        else {
+            return $this->apiOutput(Response::HTTTP_OK,"Adding new tags are not allowed here, added them in link entry ...");
+        }
+
         
     }
 
     public function tagEditPage(Tag $tag){
-        return view('link.tags.edit',compact('tag'));
+        $tags = Tag::all();
+        return view('link.tags.edit',compact('tags','tag'));
     }
 
     public function tagMangementPage(){
