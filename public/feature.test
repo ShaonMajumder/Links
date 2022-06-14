@@ -12,6 +12,11 @@ Backend
 13. Tag List Table
 14. Link Edit page
 
+15. tag add parent tags
+20. *** tag from domain
+19. Merge Tag option if accidently created duplicate tag with another name
+17. save link and update when select a new tag, but find out a solution of not getting wrong unwanted tag to create
+18. Tag Rating System
 16. Randomize with filter box
 10. New feature update instead of new link added
 8. pick domain name from unique input, save in domains tables and tag it.
