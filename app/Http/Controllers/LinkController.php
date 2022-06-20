@@ -239,15 +239,39 @@ class LinkController extends Controller
         fclose($handle);
         return $linecount;
     }
-    public function random($file="input.list"){
-        $link = Link::where('bulkin',true)->get()->random();
-        $link = $link->link;
 
-        echo '<script type="text/javascript">
-            (function() {
-                window.open("'.$link.'", "_blank");
-            })();
-        </script>';
+    public function randomPage(){
+        return view('link.random');
+    }
+
+    public function randomChoose(Request $request,$file="input.list"){
+        $tags = explode(',',$request->tags);
+        // dd($request->tags);
+        // SELECT * from `links` WHERE JSON_CONTAINS(tags, '"2"','$')
+        $link = Link::where(function($query) use($tags){
+     
+            $query->whereJsonContains('tags', $tags[0]);
+    
+            for($i = 1; $i < count($tags); $i++) {
+               $query->WhereJsonContains('tags', $tags[$i]);      
+            }
+    
+            return $query;
+        })->get();
+        if($link->count()){
+            $link = $link->random();
+            $link = $link->link;
+            $this->apiSuccess();
+            $this->data = $link;
+            return $this->apiOutput(Response::HTTP_OK, "Random Link picked ...");
+        }else{
+            return $this->apiOutput(Response::HTTP_NOT_FOUND, "No Link picked ...");
+        }
+      
+        // $link = Link::where('bulkin',true)->get()->random();
+        
+
+        
     }
 
     public function addInfo(Request $request){

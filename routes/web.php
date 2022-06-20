@@ -34,7 +34,8 @@ Route::prefix('links')->group(function(){
     Route::post('check-unique', [LinkController::class, 'checkUniqueLink']);
     
     Route::get('listtags', [LinkController::class, 'listTags']);
-    Route::get('random', [LinkController::class, 'random']);
+    Route::get('show/random', [LinkController::class, 'randomPage']);
+    Route::post('pick/random', [LinkController::class, 'randomChoose']);
     
     
 

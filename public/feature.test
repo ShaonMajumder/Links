@@ -12,25 +12,26 @@ Backend
 13. Tag List Table
 14. Link Edit page
 
-15. tag add parent tags
+
 20. *** tag from domain
+11. Rate tags quality for a link, to countdown and compare two links
+8. pick domain name from unique input, save in domains tables and tag it.
+15. tag add parent tags
 19. Merge Tag option if accidently created duplicate tag with another name
 17. save link and update when select a new tag, but find out a solution of not getting wrong unwanted tag to create
 18. Tag Rating System
 16. Randomize with filter box
 10. New feature update instead of new link added
-8. pick domain name from unique input, save in domains tables and tag it.
 9. Refresh form for new data 
-11. Rate tags quality for a link, to countdown and compare two links
 12. Stop confusion parent tag shows sub tags, but sub tag select must be the parent tags
 
 Extension
 Keep in wallet and Exit right click menu
 
 Bug fix:
+2. Fix - handle null value  when unique check
 . Self can not be own parent
 1. Not selected option missing when edit
-2. Fix - handle null value  when unique check
 
 
 
