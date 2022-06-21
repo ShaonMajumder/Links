@@ -196,6 +196,7 @@ class LinkController extends Controller
                 $data = [];
                 foreach($rows as $row){
                     if(!isset($temp[$row])){
+                        $number++;
                         $data[] = [ 'link' => $row ];
                     }
                 }
