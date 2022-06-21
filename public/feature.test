@@ -12,7 +12,10 @@ Backend
 13. Tag List Table
 14. Link Edit page
 16. Randomize with filter box
+21. Bulk count number in new insert 
+23. add tag on bulk input
 
+22. handle null on bulk input
 17. taking all json in same format, fix the bug to set them always in the same format
 20. *** tag from domain
 11. Rate tags quality for a link, to countdown and compare two links

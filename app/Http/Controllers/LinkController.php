@@ -125,7 +125,7 @@ class LinkController extends Controller
             $request_result = $request_result || ($value != null);
         $request_result = ($request->file && $request->file != 'undefined') || $request_result;
 
-
+        
         if($request_result ){
             
             if($request->tags){
@@ -197,7 +197,7 @@ class LinkController extends Controller
                 foreach($rows as $row){
                     if(!isset($temp[$row])){
                         $number++;
-                        $data[] = [ 'link' => $row ];
+                        $data[] = [ 'link' => $row , 'tags' => json_encode($request->tags) ];
                     }
                 }
                     
