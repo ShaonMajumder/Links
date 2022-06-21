@@ -150,18 +150,19 @@ class LinkController extends Controller
                 
                 $request->tags = $tag_values;
 
-                $link = Link::where('link',$request->link);
-                if($link->count() > 0){
-                    $link->update(['tags' => $request->tags]);
-                    $message = "Link updated ...";
-                }else{
-                    Link::create($request->only('link','tags'));
-                    $message = "New Link created ...";
+                if($request->link){
+                    $link = Link::where('link',$request->link);
+                    if($link->count() > 0){
+                        $link->update(['tags' => $request->tags]);
+                        $message = "Link updated ...";
+                    }else{
+                        Link::create($request->only('link','tags'));
+                        $message = "New Link created ...";
+                    }    
                 }
             }
             
             if($request->file && $request->file != 'undefined'){
-                // dd($request->file);
                 $validatedData = $request->validate([
                     'file' => 'required|max:2048',
                 ]);
@@ -195,7 +196,8 @@ class LinkController extends Controller
                 
                 $data = [];
                 foreach($rows as $row){
-                    if(!isset($temp[$row])){
+                    
+                    if(!isset($temp[$row]) and $row != ''){
                         $number++;
                         $data[] = [ 'link' => $row , 'tags' => json_encode($request->tags) ];
                     }
@@ -247,7 +249,6 @@ class LinkController extends Controller
 
     public function randomChoose(Request $request,$file="input.list"){
         $tags = explode(',',$request->tags);
-        // dd($request->tags);
         // SELECT * from `links` WHERE JSON_CONTAINS(tags, '"2"','$')
         $link = Link::where(function($query) use($tags){
      
