@@ -39,6 +39,9 @@ class LinkController extends Controller
     }
 
     public function selectAllParents(Tag $tag){
+        // link:$('#link').val(),
+        // tags:$('#tag').val()
+
         $parents = [];
         $current = $tag;
         while($current->parent){
