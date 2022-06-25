@@ -54,23 +54,36 @@ class LinkController extends Controller
     }
 
     public function tagUpdate(Tag $tag,Request $request){
-        $all_numeric = true;
-        
-        foreach ($request->tags as $key) { 
-            if (!(is_numeric($key))) {
-                $all_numeric = false;
-                break;
-            } 
-        }
+        if($request->tags){
+            $all_numeric = true;
 
-        if ($all_numeric) {
-            $tags =Tag::whereIn('id',$request->tags)->update(['parent_id'=>$tag->id]);
+            foreach ($request->tags as $key) { 
+                if (!(is_numeric($key))) {
+                    $all_numeric = false;
+                    break;
+                } 
+            }
+
+            if ($all_numeric) {
+                $request_tags = ( is_array($request->tags) ? $request->tags : explode(',', $request->tags) ) ?? [] ;
+                $tags =Tag::whereIn('id',$request_tags)->update(['parent_id'=>$tag->id]);
+                $this->apiSuccess();
+                return $this->apiOutput(Response::HTTP_OK,"Child Tags Updated ...");
+            } 
+            else {
+                return $this->apiOutput(Response::HTTP_OK,"Adding new tags are not allowed here, added them in link entry ...");
+            }
+        }else{
+            // empty from all child tags
+            $tags =Tag::where('parent_id',$tag->id)->update(['parent_id' => null]);
             $this->apiSuccess();
-            return $this->apiOutput(Response::HTTP_OK,"Child Tags Updated ...");
-        } 
-        else {
-            return $this->apiOutput(Response::HTTP_OK,"Adding new tags are not allowed here, added them in link entry ...");
+            return $this->apiOutput(Response::HTTP_OK,"Removed as parent from all child tags ...");
         }
+        
+        
+        
+
+        
 
         
     }
