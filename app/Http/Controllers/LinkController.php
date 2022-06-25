@@ -86,14 +86,16 @@ class LinkController extends Controller
     }
 
     public function checkUniqueLink(Request $request){
+        
         $link = Link::where('link',$request->link);
 
         $check_unique = false;
         if($link->count() > 0){
             $check_unique = true;
             $link = $link->first();
-            $selected_tags = Tag::whereIn('id',$link->tags ?? [])->get();
-            $unselected_tags = Tag::whereNotIn('id',$link->tags ?? [])->get();
+            $link_tags = ( is_array($link->tags) ? $link->tags : explode(',', $link->tags) ) ?? [] ;
+            $selected_tags = Tag::whereIn('id',$link_tags)->get();
+            $unselected_tags = Tag::whereNotIn('id',$link_tags)->get();
             $check_unique = true;
             $this->data = [
                 'selected_tags' => $selected_tags->toJson(),
