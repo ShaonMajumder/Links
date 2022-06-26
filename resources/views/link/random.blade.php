@@ -15,8 +15,6 @@ $(document).ready(function() {
         type:"POST",
         data:{
           "_token": "{{ csrf_token() }}",
-          link:$('#link').val(),
-          tags:$('#tag').val()
         },
         success:function(response){
           if(response.status == true) {
@@ -38,16 +36,14 @@ $(document).ready(function() {
   $("#link").on("input", function(){
     // Print entered value in a div box
     
+
+    let link = $('#link').val();
     $.ajax({
       url: "/links/check-unique",
       type:"POST",
       data:{
         "_token": "{{ csrf_token() }}",
-<<<<<<< HEAD
         link:link,
-=======
-        link:$('#link').val(),
->>>>>>> 75811e72cd4463290b25c4f541a82e240cb0f229
         tags:$('#tag').val()
       },
       success:function(response){
@@ -118,11 +114,6 @@ $(document).ready(function() {
                         <input style="display: none;" type="file" class="form-control" id="file" name="file" placeholder="Choose file">
                         <button id="file-button">Bulk Input</button>
                       </div>
-                    
-                      <div class="form-group">
-                        <label for="link">Full link</label>
-                        <input type="text" class="form-control" id="link" name="link" placeholder="Link">
-                      </div>
 
                       <div class="form-group">
                         <label for="inputPropery">tag Name</label>
@@ -133,7 +124,7 @@ $(document).ready(function() {
                         {{-- <small id="tagHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> --}}
                       </div>
                       
-                      <button type="submit" class="btn btn-primary">Submit</button>
+                      <button type="submit" class="btn btn-primary">Search</button>
                   </form>
                 </div>
             </div>
@@ -163,16 +154,10 @@ $(document).ready( function() {
 
 
   $("#form").submit(function(e){
-    
     e.preventDefault();
-
-    let link = $('#link').val();
     let tags = $('#tag').val();
-    let file = $('#file')[0].files[0];
-
+    console.log(tags);
     var formData = new FormData();
-    formData.append('file', file);
-    formData.append('link', link);
     formData.append('tags', tags);
     formData.append("_token", "{{ csrf_token() }}");
     // link:link,
@@ -180,19 +165,20 @@ $(document).ready( function() {
     // file:file,
 
     $.ajax({
-      url: "/links/insert",
+      url: "/links/pick/random",
       type:"POST",
       data: formData,
       processData: false,  // tell jQuery not to process the data
        contentType: false,  // tell jQuery not to set contentType
       success:function(response){
         toastr.success(response.message);
+        window.open(response.data, "_blank");
         // window.location.href = "{{ route('links.list','message=New links added ...') }}";
         // if(response.status)
         //   $('#form')[0].reset();
       },
       error: function(response) {
-        toastr.error(response.message);
+        toastr.error(response.responseJSON.message);
       },
     });
   });

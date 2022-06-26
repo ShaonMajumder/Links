@@ -26,24 +26,25 @@ Route::prefix('users')->group(function(){
     Route::get('{id}', [LinkController::class, 'showUser']);
 });
 Route::prefix('links')->group(function(){
-    Route::get('list', [LinkController::class, 'listLinks'])->name('links.list');
+    Route::get('/', [LinkController::class, 'listIndex'])->name('links.list');
+    Route::get('update/{link}', [LinkController::class, 'linkEdit']);
     Route::get('new', [PeopleController::class, 'create']);
     Route::post('insert', [LinkController::class, 'insert']);
     Route::post('bulk-input', [LinkController::class, 'bulkInput']);
     Route::post('check-unique', [LinkController::class, 'checkUniqueLink']);
-    Route::get('{people}/add', [PeopleController::class, 'showAddPeopleInformationForm']);
+    
     Route::get('listtags', [LinkController::class, 'listTags']);
-    Route::get('random', [LinkController::class, 'random']);
+    Route::get('show/random', [LinkController::class, 'randomPage']);
+    Route::post('pick/random', [LinkController::class, 'randomChoose']);
+    
+    
 
     Route::prefix('tags')->group(function(){
-        Route::get('/', [LinkController::class, 'tagMangementPage']);
+        Route::get('/', [LinkController::class, 'tagsIndex']);    
         Route::get('/{tag}', [LinkController::class, 'tagEditPage']);
-        Route::post('/{tag}/select-all-parent-tags', [LinkController::class, 'selectAllParents']);
         Route::post('/{tag}/update', [LinkController::class, 'tagUpdate']);
-        
-        
-        
+        Route::post('/{tag}/select-all-parent-tags', [LinkController::class, 'selectAllParents']);
     });
     
-    // Route::post('addinfo', [PeopleController::class, 'addInfo']);
+
 });

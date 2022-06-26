@@ -6,6 +6,7 @@ use App\Http\Components\Message;
 use App\Models\Link;
 use App\Models\Tag;
 use App\Models\User;
+use App\Models\Value;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 class LinkController extends Controller
 {
     use Message;
-    public function listLinks($message=null){
+    public function listIndex($message=null){
         $columns=[];
         $query = "SHOW COLUMNS FROM links";
         $results = DB::select($query);
@@ -30,11 +31,18 @@ class LinkController extends Controller
         }
     }
 
+    public function linkEdit(Link $link){
+        dd($link);
+    }
+
     public function showUser(User $user){
         dd($user);
     }
 
     public function selectAllParents(Tag $tag){
+        // link:$('#link').val(),
+        // tags:$('#tag').val()
+
         $parents = [];
         $current = $tag;
         while($current->parent){
@@ -46,26 +54,40 @@ class LinkController extends Controller
             
         $this->apiSuccess();
         $this->data = $parents;
-        return $this->apiOutput(Response::HTTP_OK, "");
+        return $this->apiOutput(Response::HTTP_OK, "Parent tags got successfully");
     }
 
     public function tagUpdate(Tag $tag,Request $request){
-        $all_numeric = true;
-        foreach ($request->tags as $key) { 
-            if (!(is_numeric($key))) {
-                $all_numeric = false;
-                break;
-            } 
-        }
+        if($request->tags){
+            $all_numeric = true;
 
-        if ($all_numeric) {
-            $tags =Tag::whereIn('id',$request->tags)->update(['parent_id'=>$tag->id]);
+            foreach ($request->tags as $key) { 
+                if (!(is_numeric($key))) {
+                    $all_numeric = false;
+                    break;
+                } 
+            }
+
+            if ($all_numeric) {
+                $request_tags = ( is_array($request->tags) ? $request->tags : explode(',', $request->tags) ) ?? [] ;
+                $tags =Tag::whereIn('id',$request_tags)->update(['parent_id'=>$tag->id]);
+                $this->apiSuccess();
+                return $this->apiOutput(Response::HTTP_OK,"Child Tags Updated ...");
+            } 
+            else {
+                return $this->apiOutput(Response::HTTP_OK,"Adding new tags are not allowed here, added them in link entry ...");
+            }
+        }else{
+            // empty from all child tags
+            $tags =Tag::where('parent_id',$tag->id)->update(['parent_id' => null]);
             $this->apiSuccess();
-            return $this->apiOutput(Response::HTTTP_OK,"Child Tags Updated ...");
-        } 
-        else {
-            return $this->apiOutput(Response::HTTTP_OK,"Adding new tags are not allowed here, added them in link entry ...");
+            return $this->apiOutput(Response::HTTP_OK,"Removed as parent from all child tags ...");
         }
+        
+        
+        
+
+        
 
         
     }
@@ -75,20 +97,21 @@ class LinkController extends Controller
         return view('link.tags.edit',compact('tags','tag'));
     }
 
-    public function tagMangementPage(){
+    public function tagsIndex(){
         $tags = Tag::all();
         return view('link.tags.index',compact('tags'));
     }
 
     public function checkUniqueLink(Request $request){
+        
         $link = Link::where('link',$request->link);
-        dd($request->tags);
         $check_unique = false;
         if($link->count() > 0){
             $check_unique = true;
             $link = $link->first();
-            $selected_tags = Tag::whereIn('id',$link->tags ?? [])->get();
-            $unselected_tags = Tag::whereNotIn('id',$link->tags ?? [])->get();
+            $link_tags = ( is_array($link->tags) ? $link->tags : explode(',', $link->tags) ) ?? [] ;
+            $selected_tags = Tag::whereIn('id',$link_tags)->get();
+            $unselected_tags = Tag::whereNotIn('id',$link_tags)->get();
             $check_unique = true;
             $this->data = [
                 'selected_tags' => $selected_tags->toJson(),
@@ -120,7 +143,7 @@ class LinkController extends Controller
             $request_result = $request_result || ($value != null);
         $request_result = ($request->file && $request->file != 'undefined') || $request_result;
 
-
+        
         if($request_result ){
             
             if($request->tags){
@@ -145,16 +168,19 @@ class LinkController extends Controller
                 
                 $request->tags = $tag_values;
 
-                $link = Link::where('link',$request->link);
-                if($link->count() > 0){
-                    $link->update(['tags' => $request->tags]);
-                }else{
-                    Link::create($request->only('link','tags'));
+                if($request->link){
+                    $link = Link::where('link',$request->link);
+                    if($link->count() > 0){
+                        $link->update(['tags' => $request->tags]);
+                        $message = "Link updated ...";
+                    }else{
+                        Link::create($request->only('link','tags'));
+                        $message = "New Link created ...";
+                    }    
                 }
             }
             
             if($request->file && $request->file != 'undefined'){
-                // dd($request->file);
                 $validatedData = $request->validate([
                     'file' => 'required|max:2048',
                 ]);
@@ -188,8 +214,10 @@ class LinkController extends Controller
                 
                 $data = [];
                 foreach($rows as $row){
-                    if(!isset($temp[$row])){
-                        $data[] = [ 'link' => $row ];
+                    
+                    if(!isset($temp[$row]) and $row != ''){
+                        $number++;
+                        $data[] = [ 'link' => $row , 'tags' => json_encode($request->tags) ];
                     }
                 }
                     
@@ -207,7 +235,7 @@ class LinkController extends Controller
             // fclose($myfile);
 
             $this->apiSuccess();
-            return $this->apiOutput(Response::HTTP_OK, "New Link added ...");  
+            return $this->apiOutput(Response::HTTP_OK, $message  ?? " Links added ...");  
             // return $this->listLinks('New People added ...');
         }else{
             return $this->apiOutput(Response::HTTP_OK, "Minimum one field is required ...");
@@ -232,15 +260,38 @@ class LinkController extends Controller
         fclose($handle);
         return $linecount;
     }
-    public function random($file="input.list"){
-        $link = Link::where('bulkin',true)->get()->random();
-        $link = $link->link;
 
-        echo '<script type="text/javascript">
-            (function() {
-                window.open("'.$link.'", "_blank");
-            })();
-        </script>';
+    public function randomPage(){
+        return view('link.random');
+    }
+
+    public function randomChoose(Request $request,$file="input.list"){
+        $tags = explode(',',$request->tags);
+        // SELECT * from `links` WHERE JSON_CONTAINS(tags, '"2"','$')
+        $link = Link::where(function($query) use($tags){
+     
+            $query->whereJsonContains('tags', $tags[0]);
+    
+            for($i = 1; $i < count($tags); $i++) {
+               $query->WhereJsonContains('tags', $tags[$i]);      
+            }
+    
+            return $query;
+        })->get();
+        if($link->count()){
+            $link = $link->random();
+            $link = $link->link;
+            $this->apiSuccess();
+            $this->data = $link;
+            return $this->apiOutput(Response::HTTP_OK, "Random Link picked ...");
+        }else{
+            return $this->apiOutput(Response::HTTP_NOT_FOUND, "No Link picked ...");
+        }
+      
+        // $link = Link::where('bulkin',true)->get()->random();
+        
+
+        
     }
 
     public function addInfo(Request $request){

@@ -14,8 +14,8 @@
                         </div>
                     @endif
                     <ul>
-                        <li> <a href="{{ url('/links/new') }}">New Link</a> </li>
-                        <li> <a href="{{ url('/links/tags') }}">List Link</a> </li>
+                        <li> <a href="{{ url('/links/') }}">Links</a> </li>
+                        <li> <a href="{{ url('/links/tags') }}">Tags</a> </li>
                     </ul>
                     
                     {{ __('You are logged in!') }}

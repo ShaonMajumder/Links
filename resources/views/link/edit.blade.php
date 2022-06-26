@@ -15,8 +15,6 @@ $(document).ready(function() {
         type:"POST",
         data:{
           "_token": "{{ csrf_token() }}",
-          link:$('#link').val(),
-          tags:$('#tag').val()
         },
         success:function(response){
           if(response.status == true) {
@@ -38,16 +36,14 @@ $(document).ready(function() {
   $("#link").on("input", function(){
     // Print entered value in a div box
     
+
+    let link = $('#link').val();
     $.ajax({
       url: "/links/check-unique",
       type:"POST",
       data:{
         "_token": "{{ csrf_token() }}",
-<<<<<<< HEAD
         link:link,
-=======
-        link:$('#link').val(),
->>>>>>> 75811e72cd4463290b25c4f541a82e240cb0f229
         tags:$('#tag').val()
       },
       success:function(response){

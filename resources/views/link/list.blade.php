@@ -56,8 +56,17 @@ $(document).ready(function() {
                             @foreach($links as $link)
                                 <tr>
                                   <td><a href="/links/{{$link->id}}/add"><i class="fa-solid fa-plus"></i></a></td>
+                                  
                                   @foreach ($link->toArray() as $item)
-                                    <td>{{ $item }}</td>    
+                                    <td>
+                                      @if(is_array($item)) 
+                                        @foreach(\App\Models\Tag::whereIn('id',$item)->get() as $tag)
+                                          <a href="tags/{{$tag->id}}">{{ $tag->name }}</a>,
+                                        @endforeach
+                                      @else
+                                        {{ $item }}
+                                      @endif
+                                    </td>    
                                   @endforeach
                                 </tr>
                             @endforeach
